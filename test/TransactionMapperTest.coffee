@@ -6,9 +6,6 @@ MockClass = new Object
 
 describe 'api/TransactionMapper', ->
 
-  describe 'marshall', ->
-    (-> TransactionMapper.marshall()).should.throw 'Not implemented'
-
   describe 'unmarshall (data -> model)', ->
 
     it 'should not unmarshall invalid data', ->
@@ -58,3 +55,51 @@ describe 'api/TransactionMapper', ->
 
     it 'should unmarshall the address', ->
       model.addresses.should.equal inputTransactionData.addresses
+
+# ------------------------------------------------------------------------------------
+
+  describe 'marshall', ->
+
+    data = TransactionMapper.marshall TransactionMapper.unmarshall inputTransactionData
+
+    it 'should marshall the transaction ID', ->
+      data.transactionID.should.equal inputTransactionData.transactionID
+
+    it 'should marshall the app name', ->
+      data.appName.should.equal inputTransactionData.appName
+
+    it 'should marshall the is sandbox', ->
+      data.isSandbox.should.equal false
+
+    it 'should marshall the transaction status', ->
+      data.transactionStatus.should.equal inputTransactionData.transactionStatus
+
+    it 'should marshall the found source type', ->
+      data.fundSourceType.should.equal inputTransactionData.fundSourceType
+
+    it 'should marshall the last four digits', ->
+      data.lastFourDigits.should.equal inputTransactionData.lastFourDigits
+
+    it 'should marshall the original amount', ->
+      data.amount.should.equal inputTransactionData.amount
+
+    it 'should marshall the paid amount', ->
+      data.paidAmount.should.equal inputTransactionData.paidAmount
+
+    it 'should marshall the currenct code', ->
+      data.currencyCode.should.equal inputTransactionData.currencyCode
+
+    it 'should marshall the transaction fee', ->
+      data.transactionFee.should.equal inputTransactionData.transactionFee
+
+    it 'should marshall the transaction time', ->
+      data.transactionTimestamp.should.equal inputTransactionData.transactionTimestamp
+
+    it 'should marshall the payer', ->
+      data.user.should.equal inputTransactionData.user
+
+    it 'should marshall the invoice', ->
+      data.invoice.should.equal inputTransactionData.invoice
+
+    it 'should marshall the address', ->
+      data.addresses.should.equal inputTransactionData.addresses

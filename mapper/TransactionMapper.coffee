@@ -7,7 +7,27 @@ check = require 'check-types'
 class TransactionMapper
 
 
-  @marshall: (transaction) -> throw new Error 'Not implemented'
+  @marshall: (transaction) ->
+    throw new Error 'Invalid transaction' unless transaction instanceof Transaction
+
+    data = {}
+    data.transactionID = transaction.id if transaction.id?
+    data.appName = transaction.appName if transaction.appName?
+    data.isSandbox = transaction.isSandbox if transaction.isSandbox?
+    data.transactionStatus = transaction.status if transaction.status?
+    data.fundSourceType = transaction.source if transaction.source?
+    data.lastFourDigits = transaction.lastFourDigits if transaction.lastFourDigits?
+    data.amount = transaction.originalAmount if transaction.originalAmount?
+    data.paidAmount = transaction.paidAmount if transaction.paidAmount?
+    data.currencyCode = transaction.currencyCode if transaction.currencyCode?
+    data.transactionFee = transaction.fee if transaction.fee?
+    data.transactionTimestamp = DateMapper.marshall transaction.time if transaction.time?
+    data.user = transaction.payer if transaction.payer?
+    data.invoice = transaction.invoice if transaction.invoice?
+    data.addresses = transaction.addresses if transaction.addresses?
+
+    return data
+
 
 
   @unmarshall: (data) ->
