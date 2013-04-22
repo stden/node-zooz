@@ -15,7 +15,7 @@ describe 'api/TransactionMapper', ->
     model = TransactionMapper.unmarshall inputTransactionData
 
     it 'should unmarshall the transaction ID', ->
-      model.id.should.equal inputTransactionData.transactionID
+      model.transactionID.should.equal inputTransactionData.transactionID
 
     it 'should unmarshall the app name', ->
       model.appName.should.equal inputTransactionData.appName
@@ -24,16 +24,16 @@ describe 'api/TransactionMapper', ->
       model.isSandbox.should.equal false
 
     it 'should unmarshall the transaction status', ->
-      model.status.should.equal inputTransactionData.transactionStatus
+      model.transactionStatus.should.equal inputTransactionData.transactionStatus
 
     it 'should unmarshall the found source type', ->
-      model.source.should.equal inputTransactionData.fundSourceType
+      model.fundSourceType.should.equal inputTransactionData.fundSourceType
 
     it 'should unmarshall the last four digits', ->
       model.lastFourDigits.should.equal inputTransactionData.lastFourDigits
 
     it 'should unmarshall the original amount', ->
-      model.originalAmount.should.equal inputTransactionData.amount
+      model.amount.should.equal inputTransactionData.amount
 
     it 'should unmarshall the paid amount', ->
       model.paidAmount.should.equal inputTransactionData.paidAmount
@@ -42,13 +42,13 @@ describe 'api/TransactionMapper', ->
       model.currencyCode.should.equal inputTransactionData.currencyCode
 
     it 'should unmarshall the transaction fee', ->
-      model.fee.should.equal inputTransactionData.transactionFee
+      model.transactionFee.should.equal inputTransactionData.transactionFee
 
     it 'should unmarshall the transaction time', ->
-      model.time.getTime().should.equal inputTransactionData.transactionTimestamp
+      model.transactionTimestamp.getTime().should.equal inputTransactionData.transactionTimestamp
 
     it 'should unmarshall the payer', ->
-      model.payer.should.equal inputTransactionData.user
+      model.user.should.equal inputTransactionData.user
 
     it 'should unmarshall the invoice', ->
       model.invoice.should.equal inputTransactionData.invoice

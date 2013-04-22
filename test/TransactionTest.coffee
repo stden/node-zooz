@@ -14,7 +14,9 @@ describe 'Transaction', ->
     describe 'success', ->
       it 'should accept valid transaction id', ->
         (-> tx.setTransactionId validTransactionId).should.not.throw()
-        tx.id.should.equal validTransactionId
+        tx.transactionID.should.equal validTransactionId
+
+# ----------------------------------------------------------------------
 
   describe 'setTransactionId', ->
     tx = new Transaction validTransactionId
@@ -26,7 +28,9 @@ describe 'Transaction', ->
     describe 'success', ->
       it 'should accept valid transaction id', ->
         (-> tx.setTransactionId validTransactionId).should.not.throw()
-        tx.id.should.equal validTransactionId
+        tx.transactionID.should.equal validTransactionId
+
+# ----------------------------------------------------------------------
 
   describe 'setAppName', ->
     tx = new Transaction validTransactionId
@@ -40,6 +44,8 @@ describe 'Transaction', ->
         valid = 'bizzbyapp'
         (-> tx.setAppName valid).should.not.throw()
         tx.appName.should.equal valid
+
+# ----------------------------------------------------------------------
 
   describe 'setIsSandbox', ->
       tx = new Transaction validTransactionId
@@ -58,6 +64,8 @@ describe 'Transaction', ->
           (-> tx.setIsSandbox valid).should.not.throw()
           tx.isSandbox.should.equal valid
 
+# ----------------------------------------------------------------------
+
   describe 'setTransactionStatus', ->
     tx = new Transaction validTransactionId
     describe 'failures', ->
@@ -69,7 +77,9 @@ describe 'Transaction', ->
       it 'should accept valid transaction status', ->
         for valid in ['Pending', 'TPCPending', 'AuthorizationProcess', 'Succeed']
           (-> tx.setTransactionStatus valid).should.not.throw()
-          tx.status.should.equal valid
+          tx.transactionStatus.should.equal valid
+
+# ----------------------------------------------------------------------
 
   describe 'setFoundSourceType', ->
     tx = new Transaction validTransactionId
@@ -78,11 +88,13 @@ describe 'Transaction', ->
         for invalid in [undefined, null, false, 1.1, [], {}, ()->]
           (-> tx.setFoundSourceType invalid).should.throw 'Invalid source'
   
-    describe 'success', ->
+    describe 'success', ->  
       it 'should accept valid source', ->
         for valid in ['VISA', 'MasterCard', 'PayPal']
           (-> tx.setFoundSourceType valid).should.not.throw()
-          tx.source.should.equal valid
+          tx.fundSourceType.should.equal valid
+
+# ----------------------------------------------------------------------
 
   describe 'setLastFourDigits', ->
     tx = new Transaction validTransactionId
@@ -97,6 +109,8 @@ describe 'Transaction', ->
         (-> tx.setLastFourDigits valid).should.not.throw()
         tx.lastFourDigits.should.equal valid
 
+# ----------------------------------------------------------------------
+
   describe 'setOriginalAmount', ->
     tx = new Transaction validTransactionId
     describe 'failures', ->
@@ -108,7 +122,9 @@ describe 'Transaction', ->
       it 'should accept valid original amount', ->
         for valid in [1, 10.1, 100]
           (-> tx.setOriginalAmount valid).should.not.throw()
-          tx.originalAmount.should.equal valid
+          tx.amount.should.equal valid
+
+# ----------------------------------------------------------------------
 
   describe 'setPaidAmount', ->
     tx = new Transaction validTransactionId
@@ -123,6 +139,8 @@ describe 'Transaction', ->
           (-> tx.setPaidAmount valid).should.not.throw()
           tx.paidAmount.should.equal valid
 
+# ----------------------------------------------------------------------
+
   describe 'setCurrencyCode', ->
     tx = new Transaction validTransactionId
     describe 'failures', ->
@@ -136,6 +154,8 @@ describe 'Transaction', ->
           (-> tx.setCurrencyCode valid).should.not.throw()
           tx.currencyCode.should.equal valid
 
+# ----------------------------------------------------------------------
+
   describe 'setTransactionFee', ->
     tx = new Transaction validTransactionId
     describe 'failures', ->
@@ -147,7 +167,9 @@ describe 'Transaction', ->
       it 'should accept valid transaction fee', ->
         for valid in [1, 10.1, 100]
           (-> tx.setTransactionFee valid).should.not.throw()
-          tx.fee.should.equal valid
+          tx.transactionFee.should.equal valid
+
+# ----------------------------------------------------------------------
 
   describe 'setTransactionTime', ->
     tx = new Transaction validTransactionId
@@ -160,7 +182,9 @@ describe 'Transaction', ->
       it 'should accept valid time', ->
         valid = new Date
         (-> tx.setTransactionTime valid).should.not.throw()
-        tx.time.should.equal valid
+        tx.transactionTimestamp.should.equal valid
+
+# ----------------------------------------------------------------------
 
   describe 'setPayer', ->
     tx = new Transaction validTransactionId
@@ -173,7 +197,9 @@ describe 'Transaction', ->
       it 'should accept valid payer', ->
         valid = {}
         (-> tx.setPayer valid).should.not.throw()
-        tx.payer.should.eql valid
+        tx.user.should.eql valid
+
+# ----------------------------------------------------------------------
 
   describe 'setInvoice', ->
     tx = new Transaction validTransactionId
@@ -187,6 +213,8 @@ describe 'Transaction', ->
         valid = {}
         (-> tx.setInvoice valid).should.not.throw()
         tx.invoice.should.eql valid
+
+# ----------------------------------------------------------------------
 
   describe 'setAddresses', ->
 

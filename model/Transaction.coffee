@@ -9,7 +9,7 @@ class Transaction
 
   setTransactionId: (transactionId) ->
     throw new Error 'Invalid transaction id' unless typeof transactionId is 'string'
-    @id = transactionId
+    @transactionID = transactionId
 
 
   setAppName: (name) ->
@@ -27,12 +27,12 @@ class Transaction
 
     console.log 'Unexpected transaction status' unless status in ['Pending', 'TPCPending', 'AuthorizationProcess', 'Succeed']
    
-    @status = status
+    @transactionStatus = status
   
 
   setFoundSourceType: (source) ->
     throw new Error 'Invalid source' unless typeof source is 'string'
-    @source = source
+    @fundSourceType = source
 
 
   setLastFourDigits: (lastFourDigits) ->
@@ -42,7 +42,7 @@ class Transaction
 
   setOriginalAmount: (amount) ->
     throw new Error 'Invalid original amount' unless check.isNumber amount
-    @originalAmount = amount
+    @amount = amount
 
 
   setPaidAmount: (amount) ->
@@ -59,17 +59,17 @@ class Transaction
 
   setTransactionFee: (fee) ->
     throw new Error 'Invalid transaction fee' unless check.isNumber fee
-    @fee = fee
+    @transactionFee = fee
 
 
   setTransactionTime: (time) ->
     throw new Error 'Invalid transaction time' unless time instanceof Date
-    @time = time
+    @transactionTimestamp = time
 
 
   setPayer: (payer) ->
     throw new Error 'Invalid payer' unless check.isObject payer
-    @payer = payer
+    @user = payer
 
 
   setInvoice: (invoice) ->

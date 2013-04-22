@@ -127,7 +127,7 @@ class ZoozGateway
   commitTransaction: (transactionId, amount, callback) ->
     throw new Error 'Invalid callback' unless callback? and callback instanceof Function
     return callback new Error('Invalid transaction id'), null unless typeof transactionId is 'string'
-    return callback new Error('Invalid amount'), null if amount? and not check.isPositiveNumber(amount)
+    return callback new Error('Invalid amount'), null if amount? and not check.isPositiveNumber amount
 
     body =
       cmd: 'commitTransaction'
@@ -151,7 +151,7 @@ class ZoozGateway
   rollbackTransaction: (transactionId, amount, callback) ->
     throw new Error 'Invalid callback' unless callback? and callback instanceof Function
     return callback new Error('Invalid transaction id'), null unless typeof transactionId is 'string'
-    return callback new Error('Invalid amount'), null unless typeof amount is 'number'
+    return callback new Error('Invalid amount'), null unless check.isPositiveNumber amount
 
     body =
       cmd: 'refundTransaction'
