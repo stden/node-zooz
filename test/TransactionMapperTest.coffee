@@ -1,6 +1,6 @@
 TransactionMapper = require '../mapper/TransactionMapper'
 
-inputTransactionData = require('./data/transaction').ResponseObject
+inputTransactionData = require('./data/transaction').USD.ResponseObject
 
 MockClass = new Object
 
