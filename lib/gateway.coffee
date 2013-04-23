@@ -144,11 +144,7 @@ class ZoozGateway
 
       return callback new Error('missing Zooz response'), null unless body?.ResponseObject?
       return callback new Error(body.ResponseObject.errorMessage), null if body.ResponseObject?.errorMessage?
-
-      try transaction = @transactionMapper.unmarshall body.ResponseObject
-      catch error then return callback error, null
-
-      return callback null, transaction
+      return callback null, body.ResponseObject
 
 
   rollbackTransaction: (transactionId, amount, callback) ->
@@ -171,11 +167,7 @@ class ZoozGateway
       
       return callback new Error('missing Zooz response'), null unless body?.ResponseObject?
       return callback new Error(body.ResponseObject.errorMessage), null if body.ResponseObject?.errorMessage?
-
-      try transaction = @transactionMapper.unmarshall body.ResponseObject
-      catch error then return callback error, null
-
-      return callback null, transaction
+      return callback null, body.ResponseObject
 
 
   openTransaction: (amount, currencyCode='GBP', userId, reference, callback) ->

@@ -1,8 +1,10 @@
 should = require 'should'
 Zooz = require '../lib/gateway'
 
-MockSuccessfulHTTPrequest = require './mock/MockSuccessfulHTTPrequest'
-MockEmptyHTTPrequest = require './mock/MockEmptyHTTPrequest'
+MockSuccessfulHTTPrequest  = require './mock/MockSuccessfulHTTPrequest'
+MockEmptyHTTPrequest       = require './mock/MockEmptyHTTPrequest'
+MockTrueSuccessHTTPrequest = require './mock/MockTrueSuccessHTTPrequest'
+MockFalseSuccessHTTPrequest = require './mock/MockFalseSuccessHTTPrequest'
 
 MockFunction = new Function
 
@@ -333,13 +335,13 @@ describe 'Gateway', ->
 
     describe 'success', ->
       it 'should return a result', (done) ->
-        ZoozObj.commitTransaction validTransactionId, 54.40, (err, res) ->
+        (new Zooz validAPIkeys, MockTrueSuccessHTTPrequest).commitTransaction validTransactionId, 54.40, (err, res) ->
           should.not.exist err
           should.exist res
           done()
 
       it 'should return a result even when amount is not specified', (done) ->
-        ZoozObj.commitTransaction validTransactionId, null, (err, res) ->
+        (new Zooz validAPIkeys, MockTrueSuccessHTTPrequest).commitTransaction validTransactionId, null, (err, res) ->
           should.not.exist err
           should.exist res
           done()
