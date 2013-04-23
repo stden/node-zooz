@@ -137,7 +137,7 @@ class ZoozGateway
 
     console.log @buildExtendedServerRequest(body)
 
-    return @request @buildExtendedServerRequest(body), (err, response, body) ->
+    return @request @buildExtendedServerRequest(body), (err, response, body) =>
       return callback err, null if err?
       
       body = JSON.parse body
@@ -145,7 +145,10 @@ class ZoozGateway
       return callback new Error('missing Zooz response'), null unless body?.ResponseObject?
       return callback new Error(body.ResponseObject.errorMessage), null if body.ResponseObject?.errorMessage?
 
-      return callback null, body.ResponseObject
+      try transaction = @transactionMapper.unmarshall body.ResponseObject
+      catch error then return callback error, null
+
+      return callback null, transaction
 
 
   rollbackTransaction: (transactionId, amount, callback) ->
@@ -161,7 +164,7 @@ class ZoozGateway
 
     console.log @buildExtendedServerRequest(body)
 
-    return @request @buildExtendedServerRequest(body), (err, response, body) ->
+    return @request @buildExtendedServerRequest(body), (err, response, body) =>
       return callback err, null if err?
       
       body = JSON.parse body
@@ -169,7 +172,10 @@ class ZoozGateway
       return callback new Error('missing Zooz response'), null unless body?.ResponseObject?
       return callback new Error(body.ResponseObject.errorMessage), null if body.ResponseObject?.errorMessage?
 
-      return callback null, body.ResponseObject
+      try transaction = @transactionMapper.unmarshall body.ResponseObject
+      catch error then return callback error, null
+
+      return callback null, transaction
 
 
   openTransaction: (amount, currencyCode='GBP', userId, reference, callback) ->
