@@ -1,6 +1,6 @@
 {
   "name": "node-zooz",
-  "preferGlobal": true,
+  "preferGlobal": false,
   "private": true,
   "version": "0.0.1",
   "description": "Zooz payment gateway node.js integration",
