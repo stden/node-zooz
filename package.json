@@ -10,7 +10,7 @@
   "dependencies": {
     "coffee-script": "1.6.x",
     "validator": "git://github.com/Bizzby/node-validator.git#master",
-    "check-types": "0.5.x",
+    "check-types": "0.6.x",
     "request": "2.16.x"
   },
   "devDependencies": {
