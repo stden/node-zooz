@@ -36,10 +36,11 @@ zgw.openTransaction(1000, 'GBP', 'userId_1', 'REF#1', function(err, token){
 ## api
 
 __#ctor(apiKeys, [httpClient], [transactionMapper], [opts])__
-- apiKeys: object keys
-- httpClient: a 'http.request' compatible function
-- transactionMapper: a mapper
+- apiKeys: object containing keys as described above
+- httpClient: a `http.request` compatible function
+- transactionMapper: a mapper?
 - opts: object with the following (but optional) keys
+
 ```javascript
 {
     logger: #function that will passed a string, or object, really for debugging
