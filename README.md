@@ -35,19 +35,19 @@ zgw.openTransaction(1000, 'GBP', 'userId_1', 'REF#1', function(err, token){
 
 ## api
 
-_#ctor(apiKeys, [httpClient], [transactionMapper], [opts])_
+__#ctor(apiKeys, [httpClient], [transactionMapper], [opts])__
 - apiKeys: object keys
 - httpClient: a 'http.request' compatible function
 - transactionMapper: a mapper
 - opts: object with the following (but optional) keys
-    ```javascript
-    {
-        logger: #function that will passed a string, or object, really for debugging
-        sandboxMode: #[bool] if true will use zooz sandbox urls
-        webUrl: #override for web mobile request url
-        extendedServerUrl: #override for extended server request url
-    }
-    ```
+```javascript
+{
+    logger: #function that will passed a string, or object, really for debugging
+    sandboxMode: #[bool] if true will use zooz sandbox urls
+    webUrl: #override for web mobile request url
+    extendedServerUrl: #override for extended server request url
+}
+```
 
 ## test
 
