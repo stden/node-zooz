@@ -2,7 +2,7 @@
   "name": "node-zooz",
   "preferGlobal": false,
   "private": true,
-  "version": "0.0.2",
+  "version": "0.2.1",
   "description": "Zooz payment gateway node.js integration",
   "scripts": {
     "test": "export NODE_ENV=testing && mocha test"
