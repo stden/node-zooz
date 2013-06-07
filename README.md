@@ -1,5 +1,5 @@
-node-zooz
-=========
+# node-zooz
+
 
 [![Build Status](https://magnum.travis-ci.com/Bizzby/node-zooz.png?token=1Hwe9k9XH8cpee5HViHn&branch=master)](https://magnum.travis-ci.com/Bizzby/node-zooz)
 
@@ -10,11 +10,10 @@ The library exposes API calls from both
 * zooz extended server API
 * zooz web mobile API
 
-usage
------
+## usage
 
 ```JavaScript
-var ZoozGateway = require('node -zooz').gateway;
+var ZoozGateway = require('node-zooz').gateway;
 
 var apiKeys = {
   "extendedServer": {
@@ -27,14 +26,29 @@ var apiKeys = {
   }
 }
 
-zgw = new ZoozGateway(apiKeys);
+var zgw = new ZoozGateway(apiKeys);
 
 zgw.openTransaction(1000, 'GBP', 'userId_1', 'REF#1', function(err, token){
-  console.log('TOEKN', token);
+  console.log('TOKEN', token);
 });
 ```
 
-test
-----
+## api
+
+_#ctor(apiKeys, [httpClient], [transactionMapper], [opts])_
+- apiKeys: object keys
+- httpClient: a 'http.request' compatible function
+- transactionMapper: a mapper
+- opts: object with the following (but optional) keys
+    ```javascript
+    {
+        logger: #function that will passed a string, or object, really for debugging
+        sandboxMode: #[bool] if true will use zooz sandbox urls
+        webUrl: #override for web mobile request url
+        extendedServerUrl: #override for extended server request url
+    }
+    ```
+
+## test
 
 npm test

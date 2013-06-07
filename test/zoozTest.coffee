@@ -34,21 +34,8 @@ describe 'Gateway', ->
 
     describe 'getAllowedServerIP', ->
 
-      describe 'defaults', ->
-
-        it 'should return localhost', ->
-          Zooz.getAllowedServerIP().should.eql ['127.0.0.1']
-
-      describe 'success', ->
-
-        it 'should return localhost for development', ->
-          Zooz.getAllowedServerIP('development').should.eql ['127.0.0.1']
-        
-        it 'should return the server list for staging', ->
-          Zooz.getAllowedServerIP('staging').should.eql ['195.28.181.179', '91.228.127.99', '91.228.127.100', '195.28.181.191', '195.28.181.192']
-        
-        it 'should return the server list for production', ->
-          Zooz.getAllowedServerIP('production').should.eql ['195.28.181.179', '91.228.127.99', '91.228.127.100', '195.28.181.191', '195.28.181.192']
+        it 'should return the server list', ->
+          Zooz.getAllowedServerIP().should.eql ['195.28.181.179', '91.228.127.99', '91.228.127.100', '195.28.181.191', '195.28.181.192']
 
 # -------------------------------------------------------------------------------
 
