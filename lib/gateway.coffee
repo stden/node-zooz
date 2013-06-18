@@ -218,13 +218,13 @@ class ZoozGateway
       return callback null, body.token
 
 
-    voidTransaction: (transaction, callback) ->
-      throw new Error 'Invalid callback' unless callback instanceof Function
+  voidTransaction: (transaction, callback) ->
+    throw new Error 'Invalid callback' unless callback instanceof Function
 
-      return callback null, {
-        transactionID: transaction.transactionID
-        status: 'voided'
-      }
+    return callback null, {
+      transactionID: transaction.transactionID
+      status: 'voided'
+    }
 
 
 module.exports = ZoozGateway
