@@ -80,14 +80,14 @@ class ZoozGateway
 
 
   getTransactionById: (transactionId, callback) ->
-    throw new Error 'Invalid callback' unless callback? and callback instanceof Function
+    throw new Error 'Invalid callback' unless callback instanceof Function
     return callback new Error('Invalid transaction id'), null unless typeof transactionId is 'string'
 
     return @requestBy 'transactionId', transactionId, callback
 
 
   getTransactionByEmail: (email, callback) ->
-    throw new Error 'Invalid callback' unless callback? and callback instanceof Function
+    throw new Error 'Invalid callback' unless callback instanceof Function
     return callback new Error('Invalid email'), null unless typeof email is 'string' and email.length > 0
     
     try validator.check(email,'Invalid email').isEmail()
@@ -97,7 +97,7 @@ class ZoozGateway
 
 
   requestBy: (byMethod, value, callback) ->
-    throw new Error 'Invalid callback' unless callback? and callback instanceof Function
+    throw new Error 'Invalid callback' unless callback instanceof Function
     return callback new Error('Invalid by method'), null unless byMethod in ['email', 'transactionId']
     return callback new Error('Invalid value'), null unless typeof value is 'string'
 
@@ -125,7 +125,7 @@ class ZoozGateway
 
 
   commitTransaction: (transactionId, amount, callback) ->
-    throw new Error 'Invalid callback' unless callback? and callback instanceof Function
+    throw new Error 'Invalid callback' unless callback instanceof Function
     return callback new Error('Invalid transaction id'), null unless typeof transactionId is 'string'
     return callback new Error('Invalid amount'), null if amount? and not check.isPositiveNumber amount
 
@@ -148,7 +148,7 @@ class ZoozGateway
 
 
   rollbackTransaction: (transactionId, amount, callback) ->
-    throw new Error 'Invalid callback' unless callback? and callback instanceof Function
+    throw new Error 'Invalid callback' unless callback instanceof Function
     return callback new Error('Invalid transaction id'), null unless typeof transactionId is 'string'
     return callback new Error('Invalid amount'), null unless check.isPositiveNumber amount
 
@@ -171,7 +171,7 @@ class ZoozGateway
 
 
   openTransaction: (amount, currencyCode='GBP', userId, reference, callback) ->
-    throw new Error 'Invalid callback' unless callback? and callback instanceof Function
+    throw new Error 'Invalid callback' unless callback instanceof Function
 
     options = @buildSecuredWebServletRequest {
       cmd: 'openTrx'
@@ -197,7 +197,7 @@ class ZoozGateway
 
 
   verifyTransaction: (transactionId, callback) ->
-    throw new Error 'Invalid callback' unless callback? and callback instanceof Function
+    throw new Error 'Invalid callback' unless callback instanceof Function
 
     options = @buildSecuredWebServletRequest {
       cmd: 'verifyTrx'
@@ -216,6 +216,15 @@ class ZoozGateway
       return callback new Error(body.errorMessage), null if body.errorMessage?
 
       return callback null, body.token
+
+
+    voidTransaction: (transaction, callback) ->
+      throw new Error 'Invalid callback' unless callback instanceof Function
+
+      return callback null, {
+        transactionID: transaction.transactionID
+        status: 'voided'
+      }
 
 
 module.exports = ZoozGateway
