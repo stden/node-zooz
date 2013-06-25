@@ -34,11 +34,13 @@ module.exports = {
       "transactionTimestamp":1344953560718,
       "addresses":[
         {
-          "billing.street":"Main St. 1",  
-          "billing.city":"New York",  
-          "billing.state":"New York",  
-          "billing.zip":"643321", 
-          "billing.country":"USA"
+          "billing": {
+            "street":"Main St. 1",
+            "city":"New York",
+            "state":"New York",
+            "zip":"643321",
+            "country":"USA"
+          }
         }
       ],
       "transactionStatus":"Succeed",

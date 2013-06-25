@@ -52,7 +52,6 @@ class Transaction
 
   setCurrencyCode: (code) ->
     throw new Error 'Invalid currency code' unless typeof code is 'string'
-    console.log 'Unexpected currency code' unless code in ['GBP']
 
     @currencyCode = code
 
