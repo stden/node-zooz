@@ -47,6 +47,7 @@ __#ctor(apiKeys, [httpClient], [transactionMapper], [opts])__
     sandboxMode: #[bool] if true will use zooz sandbox urls
     webUrl: #override for web mobile request url
     extendedServerUrl: #override for extended server request url
+    config: #overide any found options as seen in./config.coffee
 }
 ```
 
