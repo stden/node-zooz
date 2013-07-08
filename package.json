@@ -1,21 +1,22 @@
 {
-  "name": "node-zooz",
+  "name": "zooz",
   "preferGlobal": false,
   "private": true,
-  "version": "0.2.0",
+  "version": "0.1.0",
   "description": "Zooz payment gateway node.js integration",
   "scripts": {
     "test": "mocha test"
   },
-  "repository" : "https://github.com/Bizzby/node-zooz.git",
+  "repository": "https://github.com/Bizzby/node-zooz.git",
   "dependencies": {
     "coffee-script": "1.6.x",
     "validator": "git://github.com/Bizzby/node-validator.git#master",
     "check-types": "0.6.x",
-    "hyperquest": "0.1.x"
+    "request": "2.22.x",
+    "lodash": "1.3.x"
   },
   "devDependencies": {
-    "mocha": "1.10.x",
+    "mocha": "1.12.x",
     "assert": "0.4.x",
     "should": "1.2.x"
   },

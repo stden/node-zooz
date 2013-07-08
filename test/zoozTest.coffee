@@ -83,10 +83,11 @@ describe 'Gateway', ->
           should.exist new Zooz(validAPIkeys, MockSuccessfulHTTPrequest, invalidTransactionMapper).transactionMapper
 
     describe 'success', ->
-      (-> new Zooz validAPIkeys, MockFunction, MockFunction).should.not.throw()
+      (-> new Zooz validAPIkeys, MockFunction, MockFunction, {}).should.not.throw()
       should.exist new Zooz(validAPIkeys, MockFunction, MockFunction).apiKeys
       should.exist new Zooz(validAPIkeys, MockFunction, MockFunction).request
       should.exist new Zooz(validAPIkeys, MockFunction, MockFunction).transactionMapper
+      should.exist new Zooz(validAPIkeys, MockFunction, MockFunction).opts
 
 
 # -------------------------------------------------------------------------------

@@ -2,8 +2,9 @@
 
 querystring = require 'querystring'
 validator   = require 'validator'
-request     = require 'hyperquest'
+request     = require 'request'
 check       = require 'check-types'
+_           = require 'lodash'
 
 config = require '../config'
 
@@ -29,15 +30,16 @@ class ZoozGateway
 
     @sandboxMode = if opts.sandboxMode? then opts.sandboxMode else false
     @logger = if opts.logger? then opts.logger else ()->
+    @config = if opts.config? then _.assign(config, opts.config) else config
     @opts = opts
 
   buildExtendServerUrl: () ->
     if @opts.extendedServerUrl? then return @opts.extendedServerUrl
-    if @sandboxMode then config.extendedServer.url.sandbox else config.extendedServer.url.production
+    if @sandboxMode then @config.extendedServer.url.sandbox else @config.extendedServer.url.production
 
   buildWebUrl: () ->
     if @opts.webUrl? then return @opts.webUrl
-    if @sandboxMode then config.web.url.sandbox else config.web.url.production
+    if @sandboxMode then @config.web.url.sandbox else @config.web.url.production
 
   buildExtendedServerRequest: (body) ->
     throw new Error 'Invalid body' unless body? and check.isObject body
@@ -45,9 +47,9 @@ class ZoozGateway
 
     return {
       url: @buildExtendServerUrl()
-      method: config.request.method
-      encoding: config.request.encoding
-      timeout: config.request.timeout
+      method: @config.request.method
+      encoding: @config.request.encoding
+      timeout: @config.request.timeout
       strictSSL: true
       headers:
         ZooZDeveloperId: @apiKeys.extendedServer.developerId
@@ -63,12 +65,12 @@ class ZoozGateway
     throw new Error 'Invalid body' if check.isEmptyObject body
 
     url = @buildWebUrl()
-    console.log('#########', url)
+
     return {
       url: "#{url}?#{querystring.stringify(body)}"
-      method: config.request.method
-      encoding: config.request.encoding
-      timeout: config.request.timeout
+      method: @config.request.method
+      encoding: @config.request.encoding
+      timeout: @config.request.timeout
       strictSSL: true
       headers:
         ZooZUniqueID: @apiKeys.web.ZooZUniqueID
@@ -102,7 +104,7 @@ class ZoozGateway
 
     body =
       cmd: 'getTransactionDetails'
-      ver: config.version
+      ver: @config.version
 
     if byMethod is 'email' then body.email = value else body.transactionID = value
 
@@ -111,11 +113,15 @@ class ZoozGateway
     return @request @buildExtendedServerRequest(body), (err, response, body) =>
       return callback err, null if err?
 
-      body = JSON.parse body
+      try
+        body = JSON.parse body
+      catch parseError
+        return callback new Error("error parsing Zooz response JSON :: [#{parseError}]")
+
       return callback new Error('missing Zooz response'), null unless body?.ResponseObject?
       return callback new Error(body.ResponseObject.errorMessage), null if body.ResponseObject?.errorMessage?
 
-      @logger 'ZOOZ body', body
+      @logger {'ZOOZ-body', body}
 
       try transaction = @transactionMapper.unmarshall body.ResponseObject
       catch error then return callback error, null
@@ -130,16 +136,20 @@ class ZoozGateway
 
     body =
       cmd: 'commitTransaction'
-      ver: config.version
+      ver: @config.version
       transactionID: transactionId
       amount: amount
 
-    @logger @buildExtendedServerRequest(body)
+    builtBody = @buildExtendedServerRequest(body)
+    @logger {builtBody: builtBody}
 
-    return @request @buildExtendedServerRequest(body), (err, response, body) =>
+    return @request builtBody, (err, response, body) =>
       return callback err, null if err?
 
-      body = JSON.parse body
+      try
+        body = JSON.parse body
+      catch parseError
+        return callback new Error("error parsing Zooz response JSON :: [#{parseError}]")
 
       return callback new Error('missing Zooz response'), null unless body?.ResponseObject?
       return callback new Error(body.ResponseObject.errorMessage), null if body.ResponseObject?.errorMessage?
@@ -153,16 +163,20 @@ class ZoozGateway
 
     body =
       cmd: 'refundTransaction'
-      ver: config.version
+      ver: @config.version
       transactionID: transactionId
       amount: amount
 
-    @logger @buildExtendedServerRequest(body)
+    builtBody = @buildExtendedServerRequest(body)
+    @logger {builtBody: builtBody}
 
-    return @request @buildExtendedServerRequest(body), (err, response, body) =>
+    return @request builtBody, (err, response, body) =>
       return callback err, null if err?
 
-      body = JSON.parse body
+      try
+        body = JSON.parse body
+      catch parseError
+        return callback new Error("error parsing Zooz response JSON :: [#{parseError}]")
 
       return callback new Error('missing Zooz response'), null unless body?.ResponseObject?
       return callback new Error(body.ResponseObject.errorMessage), null if body.ResponseObject?.errorMessage?
@@ -174,14 +188,14 @@ class ZoozGateway
 
     options = @buildSecuredWebServletRequest {
       cmd: 'openTrx'
-      ver: config.version
+      ver: @config.version
       amount: amount
       currencyCode: currencyCode
       "user.idNumber": userId
       "invoice.additionalDetails": "#{reference}"
     }
 
-    @logger options
+    @logger {options: options}
 
     @request options, (err, response, body) =>
       return callback err, null if err?
@@ -203,14 +217,14 @@ class ZoozGateway
       transactionID: transactionId
     }
 
-    @logger options
+    @logger {options: options}
 
     @request options, (err, response, body) =>
       return callback err, null if err?
       return callback new Error('missing Zooz response'), null unless body?
 
       body = querystring.parse body
-      @logger body
+      @logger {body: body}
 
       return callback new Error(body.errorMessage), null if body.errorMessage?
 
