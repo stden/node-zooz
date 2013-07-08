@@ -25,10 +25,11 @@ class Transaction
   setTransactionStatus: (status) ->
     throw new Error 'Invalid transaction status' unless typeof status is 'string'
 
-    console.log 'Unexpected transaction status' unless status in ['Pending', 'TPCPending', 'AuthorizationProcess', 'Succeed']
-   
+    #what to do about you?
+    #console.log 'Unexpected transaction status' unless status in ['Pending', 'TPCPending', 'AuthorizationProcess', 'Succeed']
+
     @transactionStatus = status
-  
+
 
   setFoundSourceType: (source) ->
     throw new Error 'Invalid source' unless typeof source is 'string'
@@ -48,11 +49,10 @@ class Transaction
   setPaidAmount: (amount) ->
     throw new Error 'Invalid paid amount' unless check.isNumber amount
     @paidAmount = amount
-  
+
 
   setCurrencyCode: (code) ->
     throw new Error 'Invalid currency code' unless typeof code is 'string'
-
     @currencyCode = code
 
 
@@ -74,7 +74,7 @@ class Transaction
   setInvoice: (invoice) ->
     throw new Error 'Invalid invoice' unless check.isObject invoice
     @invoice = invoice
-  
+
 
   setAddresses: (addresses) ->
     throw new Error 'Invalid addresses' unless Array.isArray addresses

@@ -4,28 +4,21 @@ querystring = require 'querystring'
 validator   = require 'validator'
 request     = require 'request'
 check       = require 'check-types'
+_           = require 'lodash'
 
-getConfig = require '../config'
+config = require '../config'
 
 TransactionMapper = require '../mapper/TransactionMapper'
 
 class ZoozGateway
 
-  @getAllowedServerIP = (environment=process.env.NODE_ENV) ->
-    if environment in ['production', 'staging']
-      return [
-        '195.28.181.179'
-        '91.228.127.99' 
-        '91.228.127.100' 
-        '195.28.181.191'
-        '195.28.181.192'
-      ]
-    else return ['127.0.0.1']
+  @getAllowedServerIP = () ->
+    return config.zoozIpAddrs
 
 
-  constructor: (apiKeys, httpClient = request, transactionMapper = TransactionMapper) ->
+  constructor: (apiKeys, httpClient = request, transactionMapper = TransactionMapper, opts = {}) ->
     throw new Error 'Invalid developerId' unless apiKeys?.extendedServer?.developerId? and typeof apiKeys.extendedServer.developerId is 'string'
-    throw new Error 'Invalid serverAPIKey' unless apiKeys?.extendedServer?.serverAPIKey? and typeof apiKeys.extendedServer.serverAPIKey is 'string'    
+    throw new Error 'Invalid serverAPIKey' unless apiKeys?.extendedServer?.serverAPIKey? and typeof apiKeys.extendedServer.serverAPIKey is 'string'
     throw new Error 'Invalid ZooZUniqueID' unless apiKeys?.web?.ZooZUniqueID? and typeof apiKeys.web.ZooZUniqueID is 'string'
     throw new Error 'Invalid ZooZAppKey' unless apiKeys?.web?.ZooZAppKey? and typeof apiKeys.web.ZooZAppKey is 'string'
 
@@ -35,25 +28,34 @@ class ZoozGateway
     @request = httpClient
     @transactionMapper = transactionMapper
 
+    @sandboxMode = if opts.sandboxMode? then opts.sandboxMode else false
+    @logger = if opts.logger? then opts.logger else ()->
+    @config = if opts.config? then _.assign(config, opts.config) else config
+    @opts = opts
+
+  buildExtendServerUrl: () ->
+    if @opts.extendedServerUrl? then return @opts.extendedServerUrl
+    if @sandboxMode then @config.extendedServer.url.sandbox else @config.extendedServer.url.production
+
+  buildWebUrl: () ->
+    if @opts.webUrl? then return @opts.webUrl
+    if @sandboxMode then @config.web.url.sandbox else @config.web.url.production
 
   buildExtendedServerRequest: (body) ->
     throw new Error 'Invalid body' unless body? and check.isObject body
     throw new Error 'Invalid body' if check.isEmptyObject body
 
-    url = 'https://sandbox.zooz.co/mobile/ExtendedServerAPI'
-    url = 'https://app.zooz.com/mobile/ExtendedServerAPI' if process.env.NODE_ENV in ['production']
-    
     return {
-      url: getConfig().extendedServer.url
-      method: getConfig().method
-      encoding: getConfig().encoding
-      timeout: getConfig().timeout
+      url: @buildExtendServerUrl()
+      method: @config.request.method
+      encoding: @config.request.encoding
+      timeout: @config.request.timeout
       strictSSL: true
       headers:
         ZooZDeveloperId: @apiKeys.extendedServer.developerId
         ZooZServerAPIKey: @apiKeys.extendedServer.serverAPIKey
         "Content-type": 'application/x-www-form-urlencoded'
-        Accetp: 'application/json'
+        Accept: 'application/json'
       body: querystring.stringify body
     }
 
@@ -62,14 +64,13 @@ class ZoozGateway
     throw new Error 'Invalid body' unless body? and check.isObject body
     throw new Error 'Invalid body' if check.isEmptyObject body
 
-    url = 'https://sandbox.zooz.co/mobile/SecuredWebServlet'
-    url = 'https://app.zooz.com/mobile/SecuredWebServlet' if process.env.NODE_ENV in ['production']
+    url = @buildWebUrl()
 
     return {
-      url: "#{getConfig().web.url}?#{querystring.stringify(body)}"
-      method: getConfig().method
-      encoding: getConfig().encoding
-      timeout: getConfig().timeout
+      url: "#{url}?#{querystring.stringify(body)}"
+      method: @config.request.method
+      encoding: @config.request.encoding
+      timeout: @config.request.timeout
       strictSSL: true
       headers:
         ZooZUniqueID: @apiKeys.web.ZooZUniqueID
@@ -89,7 +90,7 @@ class ZoozGateway
   getTransactionByEmail: (email, callback) ->
     throw new Error 'Invalid callback' unless callback instanceof Function
     return callback new Error('Invalid email'), null unless typeof email is 'string' and email.length > 0
-    
+
     try validator.check(email,'Invalid email').isEmail()
     catch error then return callback error, null
 
@@ -101,23 +102,27 @@ class ZoozGateway
     return callback new Error('Invalid by method'), null unless byMethod in ['email', 'transactionId']
     return callback new Error('Invalid value'), null unless typeof value is 'string'
 
-    body = 
+    body =
       cmd: 'getTransactionDetails'
-      ver: getConfig().version
+      ver: @config.version
 
     if byMethod is 'email' then body.email = value else body.transactionID = value
 
-    console.log @buildExtendedServerRequest(body)
+    @logger @buildExtendedServerRequest(body)
 
     return @request @buildExtendedServerRequest(body), (err, response, body) =>
       return callback err, null if err?
 
-      body = JSON.parse body
+      try
+        body = JSON.parse body
+      catch parseError
+        return callback new Error("error parsing Zooz response JSON :: [#{parseError}]")
+
       return callback new Error('missing Zooz response'), null unless body?.ResponseObject?
       return callback new Error(body.ResponseObject.errorMessage), null if body.ResponseObject?.errorMessage?
 
-      console.log 'ZOOZ body', body
-      
+      @logger {'ZOOZ-body', body}
+
       try transaction = @transactionMapper.unmarshall body.ResponseObject
       catch error then return callback error, null
 
@@ -131,16 +136,20 @@ class ZoozGateway
 
     body =
       cmd: 'commitTransaction'
-      ver: getConfig().version
+      ver: @config.version
       transactionID: transactionId
       amount: amount
 
-    console.log @buildExtendedServerRequest(body)
+    builtBody = @buildExtendedServerRequest(body)
+    @logger {builtBody: builtBody}
 
-    return @request @buildExtendedServerRequest(body), (err, response, body) =>
+    return @request builtBody, (err, response, body) =>
       return callback err, null if err?
-      
-      body = JSON.parse body
+
+      try
+        body = JSON.parse body
+      catch parseError
+        return callback new Error("error parsing Zooz response JSON :: [#{parseError}]")
 
       return callback new Error('missing Zooz response'), null unless body?.ResponseObject?
       return callback new Error(body.ResponseObject.errorMessage), null if body.ResponseObject?.errorMessage?
@@ -154,17 +163,21 @@ class ZoozGateway
 
     body =
       cmd: 'refundTransaction'
-      ver: getConfig().version
+      ver: @config.version
       transactionID: transactionId
       amount: amount
 
-    console.log @buildExtendedServerRequest(body)
+    builtBody = @buildExtendedServerRequest(body)
+    @logger {builtBody: builtBody}
 
-    return @request @buildExtendedServerRequest(body), (err, response, body) =>
+    return @request builtBody, (err, response, body) =>
       return callback err, null if err?
-      
-      body = JSON.parse body
-      
+
+      try
+        body = JSON.parse body
+      catch parseError
+        return callback new Error("error parsing Zooz response JSON :: [#{parseError}]")
+
       return callback new Error('missing Zooz response'), null unless body?.ResponseObject?
       return callback new Error(body.ResponseObject.errorMessage), null if body.ResponseObject?.errorMessage?
       return callback null, body.ResponseObject
@@ -175,14 +188,14 @@ class ZoozGateway
 
     options = @buildSecuredWebServletRequest {
       cmd: 'openTrx'
-      ver: getConfig().version
+      ver: @config.version
       amount: amount
       currencyCode: currencyCode
       "user.idNumber": userId
       "invoice.additionalDetails": "#{reference}"
     }
 
-    console.log options
+    @logger {options: options}
 
     @request options, (err, response, body) =>
       return callback err, null if err?
@@ -204,14 +217,14 @@ class ZoozGateway
       transactionID: transactionId
     }
 
-    console.log options
+    @logger {options: options}
 
     @request options, (err, response, body) =>
       return callback err, null if err?
       return callback new Error('missing Zooz response'), null unless body?
 
       body = querystring.parse body
-      console.log body
+      @logger {body: body}
 
       return callback new Error(body.errorMessage), null if body.errorMessage?
 

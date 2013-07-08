@@ -1,46 +1,21 @@
-config =
-
-  development:
+module.exports =
+  request:
     version: '1.0.0'
     method: 'POST'
     encoding: 'UTF-8'
     timeout: 5000
-    extendedServer:
-      url: 'https://sandbox.zooz.co/mobile/ExtendedServerAPI'
-    web:
-      url: 'https://sandbox.zooz.co/mobile/SecuredWebServlet'
-
-  testing:
-    version: '1.0.0'
-    method: 'POST'
-    encoding: 'UTF-8'
-    timeout: 5000
-    extendedServer:
-      url: 'https://sandbox.zooz.co/mobile/ExtendedServerAPI'
-    web:
-      url: 'https://sandbox.zooz.co/mobile/SecuredWebServlet'
-
-  staging:
-    version: '1.0.0'
-    method: 'POST'
-    encoding: 'UTF-8'
-    timeout: 5000
-    extendedServer:
-      url: 'https://sandbox.zooz.co/mobile/ExtendedServerAPI'
-    web:
-      url: 'https://sandbox.zooz.co/mobile/SecuredWebServlet'
-
-  production:
-    version: '1.0.0'
-    method: 'POST'
-    encoding: 'UTF-8'
-    timeout: 5000
-    extendedServer:
-      url: 'https://app.zooz.com/mobile/ExtendedServerAPI'
-    web:
-      url: 'https://app.zooz.com/mobile/SecuredWebServlet'
-
-
-module.exports = (environment = process.env.NODE_ENV) ->
-  throw new Error 'Environment not found' unless config[environment]?
-  return config[environment]
+  extendedServer:
+    url:
+      sandbox: 'https://sandbox.zooz.co/mobile/ExtendedServerAPI'
+      production: 'https://app.zooz.com/mobile/ExtendedServerAPI'
+  web:
+    url:
+      sandbox: 'https://sandbox.zooz.co/mobile/SecuredWebServlet'
+      production: 'https://app.zooz.com/mobile/ExtendedServerAPI'
+  zoozIpAddrs: [
+    '195.28.181.179'
+    '91.228.127.99'
+    '91.228.127.100'
+    '195.28.181.191'
+    '195.28.181.192'
+  ]
