@@ -1,9 +1,9 @@
 module.exports =
   request:
-    version: '1.0.0'
+    version: require('./package.json').version
     method: 'POST'
     encoding: 'UTF-8'
-    timeout: 5000
+    timeout: 30000
   extendedServer:
     url:
       sandbox: 'https://sandbox.zooz.co/mobile/ExtendedServerAPI'
