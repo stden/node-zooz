@@ -401,7 +401,7 @@ describe 'Gateway', ->
 
 # ----------------------------------------------------------------------------------
 
-  describe 'cancelTransaction', ->
+  describe 'voidTransaction', ->
 
     validTransactionId = '3465435634567456'
 
@@ -410,19 +410,19 @@ describe 'Gateway', ->
       call() for call in [undefined, null, false, 1.1, NaN, new Object, '1121234', [], {}, new Date].map (invalidCallback) ->
         () ->
           it "should not accept #{invalidCallback} as callback", ->
-            (-> (new Zooz validAPIkeys, MockSuccessfulHTTPrequest).cancelTransaction validTransactionId, invalidCallback ).should.throw 'Invalid callback'
+            (-> (new Zooz validAPIkeys, MockSuccessfulHTTPrequest).voidTransaction validTransactionId, invalidCallback ).should.throw 'Invalid callback'
 
       call() for call in [undefined, null, false, 1.1, [], {}, new Date, ()->].map (invalidId) ->
         () ->
           it "should not accept #{invalidId} as transaction id", (done) ->
-            (new Zooz validAPIkeys, MockSuccessfulHTTPrequest).cancelTransaction invalidId, (err, res) ->
+            (new Zooz validAPIkeys, MockSuccessfulHTTPrequest).voidTransaction invalidId, (err, res) ->
               err.should.be.instanceof Error
               err.message.should.equal 'Invalid transaction id'
               should.not.exist res
               done()
 
       it 'returns an error when there is no response body', (done) ->
-        (new Zooz validAPIkeys, MockEmptyHTTPrequest).cancelTransaction validTransactionId, (err, res) ->
+        (new Zooz validAPIkeys, MockEmptyHTTPrequest).voidTransaction validTransactionId, (err, res) ->
           err.should.be.instanceof Error
           err.message.should.equal 'missing Zooz response'
           should.not.exist res
@@ -431,7 +431,7 @@ describe 'Gateway', ->
     describe 'success', ->
 
       it 'should return a result', (done) ->
-        (new Zooz validAPIkeys, MockTrueSuccessHTTPrequest).cancelTransaction validTransactionId, (err, res) ->
+        (new Zooz validAPIkeys, MockTrueSuccessHTTPrequest).voidTransaction validTransactionId, (err, res) ->
           should.not.exist err
           should.exist res
           done()
