@@ -10,7 +10,9 @@ config = require '../config'
 
 TransactionMapper = require '../mapper/TransactionMapper'
 
+
 class ZoozGateway
+
 
   @getAllowedServerIP = () ->
     return config.zoozIpAddrs
@@ -33,13 +35,16 @@ class ZoozGateway
     @config = if opts.config? then _.assign(config, opts.config) else config
     @opts = opts
 
+
   buildExtendServerUrl: () ->
     if @opts.extendedServerUrl? then return @opts.extendedServerUrl
     if @sandboxMode then @config.extendedServer.url.sandbox else @config.extendedServer.url.production
 
+
   buildWebUrl: () ->
     if @opts.webUrl? then return @opts.webUrl
     if @sandboxMode then @config.web.url.sandbox else @config.web.url.production
+
 
   buildExtendedServerRequest: (body) ->
     throw new Error 'Invalid body' unless body? and check.isObject body
@@ -116,7 +121,7 @@ class ZoozGateway
       try
         body = JSON.parse body
       catch parseError
-        return callback new Error("error parsing Zooz response JSON :: [#{parseError}]")
+        return callback new Error("error parsing Zooz response JSON :: [#{parseError}]"), null
 
       return callback new Error('missing Zooz response'), null unless body?.ResponseObject?
       return callback new Error(body.ResponseObject.errorMessage), null if body.ResponseObject?.errorMessage?
@@ -149,7 +154,32 @@ class ZoozGateway
       try
         body = JSON.parse body
       catch parseError
-        return callback new Error("error parsing Zooz response JSON :: [#{parseError}]")
+        return callback new Error("error parsing Zooz response JSON :: [#{parseError}]"), null
+
+      return callback new Error('missing Zooz response'), null unless body?.ResponseObject?
+      return callback new Error(body.ResponseObject.errorMessage), null if body.ResponseObject?.errorMessage?
+      return callback null, body.ResponseObject
+
+
+  cancelTransaction: (transactionId, callback) ->
+    throw new Error 'Invalid callback' unless callback instanceof Function
+    return callback new Error('Invalid transaction id'), null unless typeof transactionId is 'string'
+
+    body =
+      cmd: 'cancelPayment'
+      ver: @config.version
+      transactionID: transactionId
+
+    builtBody = @buildExtendedServerRequest(body)
+    @logger {builtBody: builtBody}
+
+    return @request builtBody, (err, response, body) =>
+      return callback err, null if err?
+
+      try
+        body = JSON.parse body
+      catch parseError
+        return callback new Error("error parsing Zooz response JSON :: [#{parseError}]"), null
 
       return callback new Error('missing Zooz response'), null unless body?.ResponseObject?
       return callback new Error(body.ResponseObject.errorMessage), null if body.ResponseObject?.errorMessage?
@@ -176,7 +206,7 @@ class ZoozGateway
       try
         body = JSON.parse body
       catch parseError
-        return callback new Error("error parsing Zooz response JSON :: [#{parseError}]")
+        return callback new Error("error parsing Zooz response JSON :: [#{parseError}]"), null
 
       return callback new Error('missing Zooz response'), null unless body?.ResponseObject?
       return callback new Error(body.ResponseObject.errorMessage), null if body.ResponseObject?.errorMessage?
