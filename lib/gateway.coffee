@@ -96,7 +96,8 @@ class ZoozGateway
     throw new Error 'Invalid callback' unless callback instanceof Function
     return callback new Error('Invalid email'), null unless typeof email is 'string' and email.length > 0
 
-    try validator.check(email,'Invalid email').isEmail()
+    try
+      if !validator.isEmail(email) then throw new Error('Invalid email')
     catch error then return callback error, null
 
     return @requestBy 'email', email, callback
@@ -213,7 +214,7 @@ class ZoozGateway
       return callback null, body.ResponseObject
 
 
-  openTransaction: (amount, currencyCode='GBP', userId, reference, callback) ->
+  openTransaction: (amount, currencyCode = 'GBP', userId, reference, callback) ->
     throw new Error 'Invalid callback' unless callback instanceof Function
 
     options = @buildSecuredWebServletRequest {

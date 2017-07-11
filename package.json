@@ -9,11 +9,11 @@
   },
   "repository": "https://github.com/stden/node-zooz.git",
   "dependencies": {
-    "coffee-script": "1.6.x",
-    "validator": "git://github.com/chriso/validator.js.git#master",
     "check-types": "0.6.x",
+    "coffee-script": "^1.7.1",
+    "lodash": "1.3.x",
     "request": "2.22.x",
-    "lodash": "1.3.x"
+    "validator": "git://github.com/chriso/validator.js.git#master"
   },
   "devDependencies": {
     "mocha": "1.12.x",
@@ -21,6 +21,6 @@
     "should": "1.2.x"
   },
   "engines": {
-    "node": ">=0.8.22"
+    "node": ">=4.0.0"
   }
 }
