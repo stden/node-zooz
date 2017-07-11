@@ -7,10 +7,10 @@
   "scripts": {
     "test": "mocha test"
   },
-  "repository": "https://github.com/Bizzby/node-zooz.git",
+  "repository": "https://github.com/stden/node-zooz.git",
   "dependencies": {
     "coffee-script": "1.6.x",
-    "validator": "git://github.com/Bizzby/node-validator.git#master",
+    "validator": "git://github.com/chriso/validator.js.git#master",
     "check-types": "0.6.x",
     "request": "2.22.x",
     "lodash": "1.3.x"
