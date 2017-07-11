@@ -10,8 +10,7 @@ matrix:
 
 notifications:
   email:
-    - fab@bizzby.com
-    - james@bizzby.com
+    - super.denis@gmail.com
 
 env:
   global:
