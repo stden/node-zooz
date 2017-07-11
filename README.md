@@ -1,7 +1,6 @@
 # node-zooz
 
-
-[![Build Status](https://magnum.travis-ci.com/Bizzby/node-zooz.png?token=1Hwe9k9XH8cpee5HViHn&branch=master)](https://magnum.travis-ci.com/Bizzby/node-zooz)
+[![Build Status](https://travis-ci.org/stden/node-zooz.svg?branch=master)](https://travis-ci.org/stden/node-zooz)
 
 Zooz Payment gateway node.js integration library
 
